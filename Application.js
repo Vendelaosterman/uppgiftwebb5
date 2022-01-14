@@ -1,9 +1,8 @@
-function Application(content) {   
-    this.contentdiv = content; // Grundelement 
-    this.sum = 0; 
-    this.sumArray = [];
-    this.diceList = []; 
-
+function Application(content) { // konstruktor med grundelement som parameter
+    this.contentdiv = content; // grundelement  
+    this.diceList = []; // array med tärningsobjekt 
+    
+    // Metod för att skapa element
     this.createElems = function () {
 
         this.windowdiv = document.createElement("div");
@@ -18,6 +17,7 @@ function Application(content) {
         this.contentdiv.appendChild(this.windowdiv);
         this.windowdiv.classList.add("dice-window-wrapper");
         this.windowdiv.appendChild(this.menudiv);
+        this.windowdiv.style.position = "absolute";
         this.menudiv.classList.add("dice-menubar-wrapper");
         this.menudiv.appendChild(this.closediv);
         this.closediv.classList.add("close");
@@ -25,7 +25,7 @@ function Application(content) {
         this.tooldiv.classList.add("dice-toolbar-wrapper");
         this.tooldiv.appendChild(this.toolul);
     
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) { // skapar 3 st li-element
             let li = document.createElement("li");
             this.toolul.appendChild(li);
         }
@@ -35,7 +35,7 @@ function Application(content) {
         this.menuli[1].classList.add("remove");
         this.menuli[2].classList.add("roll");
 
-        // Aktivera eventlyssnare 
+        // Aktivera eventlyssnare för knappar 
         this.menuli[0].addEventListener("click", this.newDice); 
         this.menuli[1].addEventListener("click", this.removeDice); 
         this.menuli[2].addEventListener("click", this.rollDices); 
@@ -45,7 +45,7 @@ function Application(content) {
         this.counterul.classList.add("dice-toolbar-counter-wrapper");
         this.toolLi.appendChild(this.counterul);
     
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) { // skapar 5 st li-element
             this.sumli = document.createElement("li");
             this.counterul.appendChild(this.sumli);
             this.sumli.classList.add("zero");
@@ -57,55 +57,55 @@ function Application(content) {
 
     }
 
-    let a_this = this; 
+    var a_this = this; // sparar ref till det aktuella objektet
 
+    // Metod för att hantera och skapa ny instans av en tärning
     this.newDice = function(){
-        if (a_this.diceList.length != 40){
-            var dice = new Dice();
+        if (a_this.diceList.length != 40){ // kontrollerar antalet understiger 40 st objekt 
+            var dice = new Dice(); // ny instans av Dice
             dice.roll();
-            a_this.diceList.push(dice);
+            a_this.diceList.push(dice); // pushar in objektet i diceList 
             a_this.countSum();
-            a_this.dicecontul.appendChild(dice.diceli);
+            a_this.dicecontul.appendChild(dice.diceli); // applicerar li-elementet sist i dicecontul
             a_this.audio();
         }
     }
-
+    // Metod för att ta bort en tärning
     this.removeDice = function(){
-        if (a_this.diceList.length != 0){
-            console.log(a_this.dicecontul);
-            a_this.dicecontul.removeChild(a_this.dicecontul.lastChild);
-            a_this.diceList.pop();
+        if (a_this.diceList.length != 0){ // kontrollerar om det finns tärningar i spelfönstret
+            a_this.dicecontul.removeChild(a_this.dicecontul.lastChild); // tar bort sista elementet
+            a_this.diceList.pop(); // tar bort sista värdet (objektet) i diceList 
             a_this.countSum();
             a_this.audio();
         }
     }
-
+    // Metod för att slumpa befintliga tärningar
     this.rollDices = function () {
-        for (let i = 0; i < a_this.diceList.length; i++) {
-            a_this.diceList[i].roll();
+        for (let i = 0; i < a_this.diceList.length; i++) { // loopar igenom längden på diceList
+            a_this.diceList[i].roll(); // anropar roll för varje dice objekt 
         }
         a_this.countSum();
         a_this.audio();
     }
-
+    // Metod för att bräkna totalsumma 
     this.countSum = function () {
         this.sum = 0;
-        for (let i = 0; i < this.diceList.length; i++) {
-            this.sum += this.diceList[i].getDiceNr();
+        for (let i = 0; i < this.diceList.length; i++) { // loopar igenom längden på diceList
+            this.sum += this.diceList[i].getDiceNr(); // multiplicerar sum med varje enskild tärnings nummer
         }
         this.showSum();
         
     }
-    
+    // Metod för att applicera summan visuellt 
     this.showSum = function(){
-        this.sumArr = this.sum.toString().split("");
+        this.sumArr = this.sum.toString().split(""); // konverterar till string och splittar summan
         var testli = this.counterul.getElementsByTagName("li"); 
-        for (let i = 0; i < 5; i++) { // nollställer classnamn
+        for (let i = 0; i < 5; i++) { // nollställer klassnamn till zero 
             testli[i].className = "zero";
         }
-        for (let i = 0; i < this.sumArr.length; i++) {
+        for (let i = 0; i < this.sumArr.length; i++) { // loopar igenom längden på sumArr
             var sumClass;
-            switch (this.sumArr[i]) {
+            switch (this.sumArr[i]) { // ändrar värdet på varje värde i sumArr till klassnamn
                 case '0':
                     sumClass = "zero";
                     break; 
@@ -137,17 +137,17 @@ function Application(content) {
                     sumClass = "nine";     
 
             } 
-            let pos = 5 - this.sumArr.length; // sätter position
-            testli[pos+i].className = sumClass; 
+            let pos = 5 - this.sumArr.length; // sparar position 
+            testli[pos+i].className = sumClass; //sätter position & klassnamn
         }
 
     }
-
+    // Metod för att spela upp ljudfil 
     this.audio = function(){
         var audio = new Audio("src/wav/add.wav");
         audio.play();
     }
-
+    // Metod för att stänga ner fönster 
     this.endApplication = function(){
         a_this.windowdiv.remove();
     }
