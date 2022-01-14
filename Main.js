@@ -1,15 +1,16 @@
 
 var Main = {
-
+    
     init : function(){
-        let windowBtn = document.getElementById("icon-dice"); 
-        windowBtn.addEventListener("click", function(){
+        let windowBtn = document.getElementById("icon-dice"); // hämtar knapp i DOM
+        windowBtn.addEventListener("click", function(){ // applicerar händelselyssnare på knapp
             var application = new Application(document.getElementById("page-content-wrapper")); // Ny instans av Application
             application.createElems(); 
-            Main.dragNdrop();    
+            Main.dragNdrop(); 
         });
     },
-
+    
+    // metod för att hanter drag & drop
     dragNdrop : function(){
             var windows = document.getElementsByClassName("dice-window-wrapper");
             var drag = new DragnDrop(); // Ny instans av DragnDrop
@@ -20,5 +21,5 @@ var Main = {
 
 };
 
-window.addEventListener("load", Main.init);
+window.addEventListener("load", Main.init); // initmetoden anropas när webbsidan är inladdad
 

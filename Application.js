@@ -1,3 +1,4 @@
+
 function Application(content) { // konstruktor med grundelement som parameter
     this.contentdiv = content; // grundelement  
     this.diceList = []; // array med tärningsobjekt 
